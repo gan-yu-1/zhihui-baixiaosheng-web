@@ -18,6 +18,7 @@ import { useImageFiles } from '@/app/components/base/image-uploader/hooks'
 import FileUploaderInAttachmentWrapper from '@/app/components/base/file-uploader-in-attachment'
 import type { FileEntity, FileUpload } from '@/app/components/base/file-uploader-in-attachment/types'
 import { getProcessedFiles } from '@/app/components/base/file-uploader-in-attachment/utils'
+import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 
 export interface IChatProps {
   chatList: ChatItem[]
@@ -176,8 +177,8 @@ const Chat: FC<IChatProps> = ({
       </div>
       {
         !isHideSendInput && (
-          <div className='fixed z-10 bottom-0 left-1/2 transform -translate-x-1/2 pc:ml-[122px] tablet:ml-[96px] mobile:ml-0 pc:w-[794px] tablet:w-[794px] max-w-full mobile:w-full px-3.5'>
-            <div className='p-[5.5px] max-h-[150px] bg-white border-[1.5px] border-gray-200 rounded-xl overflow-y-auto'>
+          <div className='chat-composer fixed bottom-0 left-1/2 z-10 w-full max-w-full -translate-x-1/2 px-3.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-6 tablet:ml-[112px] tablet:w-[794px] pc:ml-[124px] pc:w-[794px]'>
+            <div className='chat-composer-inner max-h-[150px] overflow-y-auto rounded-xl border-[1.5px] border-[#D9CDD1] bg-[#FFFDFC] p-[5.5px] shadow-[0_8px_32px_rgba(63,39,45,0.10)] focus-within:border-[#7A202C]'>
               {
                 visionConfig?.enabled && (
                   <>
@@ -214,17 +215,19 @@ const Chat: FC<IChatProps> = ({
               }
               <Textarea
                 className={`
-                  block w-full px-2 pr-[118px] py-[7px] leading-5 max-h-none text-base text-gray-700 outline-none appearance-none resize-none
+                  chat-textarea block max-h-none w-full resize-none appearance-none px-2 py-3 pr-[84px] text-base leading-6 text-[#40363A] outline-none placeholder:text-[#7B7074]
                   ${visionConfig?.enabled && 'pl-12'}
                 `}
+                aria-label="输入校园咨询问题"
+                placeholder="输入你的校园问题，Enter 发送，Shift + Enter 换行"
                 value={query}
                 onChange={handleContentChange}
                 onKeyUp={handleKeyUp}
                 onKeyDown={handleKeyDown}
                 autoSize
               />
-              <div className="absolute bottom-2 right-6 flex items-center h-8">
-                <div className={`${s.count} mr-3 h-5 leading-5 text-sm bg-gray-50 text-gray-500 px-2 rounded`}>{query.trim().length}</div>
+              <div className="absolute bottom-1 right-4 flex h-11 items-center">
+                <div className={`${s.count} mr-2 hidden h-5 rounded bg-[#F4EFF0] px-2 text-sm leading-5 text-[#6C6166] sm:block`}>{query.trim().length}</div>
                 <Tooltip
                   selector='send-tip'
                   htmlContent={
@@ -234,7 +237,14 @@ const Chat: FC<IChatProps> = ({
                     </div>
                   }
                 >
-                  <div className={`${s.sendBtn} w-8 h-8 cursor-pointer rounded-md`} onClick={handleSend}></div>
+                  <button
+                    type="button"
+                    aria-label={t('common.operation.send')}
+                    onClick={handleSend}
+                    className="chat-send inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-[#7A202C] transition-colors hover:bg-[#F3E8EA] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#7A202C] active:bg-[#E9D9DC]"
+                  >
+                    <PaperAirplaneIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
                 </Tooltip>
               </div>
             </div>

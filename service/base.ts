@@ -159,6 +159,7 @@ const handleStream = (
   let buffer = ''
   let bufferObj: Record<string, any>
   let isFirstMessage = true
+  let hasAgentMessage = false
   function read() {
     let hasError = false
     reader?.read().then((result: any) => {
@@ -168,6 +169,7 @@ const handleStream = (
       }
       buffer += decoder.decode(result.value, { stream: true })
       const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
       try {
         lines.forEach((message) => {
           if (message.startsWith('data: ')) { // check if it starts with data:
@@ -194,6 +196,12 @@ const handleStream = (
               return
             }
             if (bufferObj.event === 'message' || bufferObj.event === 'agent_message') {
+              if (bufferObj.event === 'agent_message') {
+                hasAgentMessage = true
+              }
+              else if (hasAgentMessage) {
+                return
+              }
               // can not use format here. Because message is splited.
               onData(unicodeToChar(bufferObj.answer), isFirstMessage, {
                 conversationId: bufferObj.conversation_id,
@@ -228,7 +236,6 @@ const handleStream = (
             }
           }
         })
-        buffer = lines[lines.length - 1]
       }
       catch (e) {
         onData('', false, {
@@ -398,8 +405,8 @@ export const ssePost = (
           return
         }
         onData?.(str, isFirstMessage, moreInfo)
-      }, () => {
-        onCompleted?.()
+      }, (hasError?: boolean) => {
+        onCompleted?.(hasError)
       }, onThought, onMessageEnd, onMessageReplace, onFile, onWorkflowStarted, onWorkflowFinished, onNodeStarted, onNodeFinished)
     })
     .catch((e) => {

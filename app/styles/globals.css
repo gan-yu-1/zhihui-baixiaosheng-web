@@ -82,7 +82,9 @@ body {
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: #30272A;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  line-height: 1.6;
   /* background: linear-gradient(
       to bottom,
       transparent,
@@ -127,4 +129,97 @@ a {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
+}
+
+
+/* Switchable campus themes: palette primitives -> semantic colors -> components. */
+:root {
+  --campus-blue-100: oklch(95% 0.016 260);
+  --campus-blue-200: oklch(90% 0.025 260);
+  --campus-blue-500: oklch(51% 0.052 267);
+  --campus-blue-600: oklch(45% 0.055 267);
+  --campus-navy-800: oklch(35% 0.041 267);
+  --campus-navy-900: oklch(29% 0.039 267);
+  --campus-paper: oklch(98% 0.009 90);
+  --campus-lavender: oklch(94% 0.018 310);
+}
+
+html[data-theme='pastel'] {
+  color-scheme: light;
+  --ui-page: var(--campus-blue-100);
+  --ui-surface: var(--campus-paper);
+  --ui-accent: var(--campus-blue-500);
+  --ui-accent-hover: var(--campus-blue-600);
+  --ui-text: var(--campus-navy-900);
+  --ui-muted: var(--campus-navy-800);
+  --ui-line: oklch(82% 0.025 265);
+  --ui-selected: var(--campus-lavender);
+  --ui-header-surface: var(--ui-surface);
+  --ui-control-surface: var(--ui-surface);
+}
+
+html[data-theme='pastel'] body {
+  background-color: var(--ui-page);
+}
+
+/* 彩蛋式主题切换：视口右下角的小图案，静默待命，悬停或聚焦时浮现。 */
+.theme-egg-toggle {
+  position: fixed;
+  right: max(0.75rem, env(safe-area-inset-right));
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  z-index: 30;
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #7A202C;
+  background: transparent;
+  border: 0;
+  border-radius: 9999px;
+  opacity: 0.42;
+  cursor: pointer;
+  transition: opacity 180ms ease, transform 180ms ease, background-color 180ms ease;
+}
+
+.theme-egg-toggle:hover {
+  opacity: 0.84;
+  background: rgb(122 32 44 / 0.06);
+  transform: translateY(-1px);
+}
+
+.theme-egg-toggle:active {
+  transform: translateY(0);
+}
+
+.theme-egg-toggle:focus-visible {
+  opacity: 1;
+  outline: 2px solid #7A202C;
+  outline-offset: 3px;
+}
+
+html[data-theme='pastel'] .theme-egg-toggle {
+  color: var(--campus-navy-800);
+  opacity: 0.4;
+}
+
+html[data-theme='pastel'] .theme-egg-toggle:hover {
+  opacity: 0.84;
+  background: rgb(68 47 53 / 0.07);
+}
+
+html[data-theme='pastel'] .theme-egg-toggle:focus-visible {
+  outline-color: var(--ui-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-egg-toggle {
+    transition: none;
+  }
+
+  .theme-egg-toggle:hover,
+  .theme-egg-toggle:active {
+    transform: none;
+  }
 }

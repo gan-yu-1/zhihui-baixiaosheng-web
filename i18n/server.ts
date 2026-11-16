@@ -13,7 +13,7 @@ export const getLocaleOnServer = async (): Promise<Locale> => {
   let languages: string[] | undefined
   // get locale from cookie
   const localeCookie = (await cookies()).get('locale')
-  languages = localeCookie?.value ? [localeCookie.value] : []
+  languages = localeCookie?.value && locales.includes(localeCookie.value) ? [localeCookie.value] : []
 
   if (!languages.length) {
     // Negotiator expects plain object so we need to transform headers
@@ -21,10 +21,12 @@ export const getLocaleOnServer = async (): Promise<Locale> => {
     const headersList = await headers()
     headersList.forEach((value, key) => (negotiatorHeaders[key] = value))
     // Use negotiator and intl-localematcher to get best locale
-    languages = new Negotiator({ headers: negotiatorHeaders }).languages()
+    languages = new Negotiator({ headers: negotiatorHeaders }).languages().filter(language => language !== '*')
   }
 
   // match locale
-  const matchedLocale = match(languages, locales, i18n.defaultLocale) as Locale
+  const matchedLocale = languages.length
+    ? match(languages, locales, i18n.defaultLocale) as Locale
+    : i18n.defaultLocale
   return matchedLocale
 }

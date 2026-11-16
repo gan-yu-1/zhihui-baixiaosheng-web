@@ -151,15 +151,10 @@ const Answer: FC<IAnswerProps> = ({
     return list.filter(file => file.type === 'image' && file.belongs_to === 'assistant')
   }
 
-  const agentModeAnswer = (
+  const agentActivity = (
     <div>
       {agent_thoughts?.map((item, index) => (
-        <div key={index}>
-          {item.thought && (
-            <StreamdownMarkdown content={item.thought} />
-          )}
-          {/* {item.tool} */}
-          {/* perhaps not use tool */}
+        <div key={item.id || index}>
           {!!item.tool && (
             <Thought
               thought={item}
@@ -189,21 +184,22 @@ const Answer: FC<IAnswerProps> = ({
         </div>
         <div className={`${s.answerWrap} max-w-[calc(100%-3rem)]`}>
           <div className={`${s.answer} relative text-sm text-gray-900`}>
-            <div className={`ml-2 py-3 px-4 bg-gray-100 rounded-tr-2xl rounded-b-2xl ${workflowProcess && 'min-w-[480px]'}`}>
+            <div className={`answer-bubble ml-2 py-3 px-4 bg-gray-100 rounded-tr-2xl rounded-b-2xl ${workflowProcess && 'min-w-[480px]'}`}>
               {workflowProcess && (
                 <WorkflowProcess data={workflowProcess} hideInfo />
               )}
-              {(isResponding && (isAgentMode ? (!content && (agent_thoughts || []).filter(item => !!item.thought || !!item.tool).length === 0) : !content))
+              {(isResponding && !content && !(agent_thoughts || []).some(item => !!item.tool))
                 ? (
                   <div className="flex items-center justify-center w-6 h-5">
                     <LoadingAnim type="text" />
                   </div>
                 )
-                : (isAgentMode
-                  ? agentModeAnswer
-                  : (
+                : (
+                  <>
+                    {isAgentMode && agentActivity}
                     <StreamdownMarkdown content={content} />
-                  ))}
+                  </>
+                )}
               {suggestedQuestions.length > 0 && (
                 <div className="mt-3">
                   <div className="flex gap-1 mt-1 flex-wrap">
